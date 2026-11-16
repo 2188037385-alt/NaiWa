@@ -120,7 +120,7 @@
 不需要 Visual Studio，也不需要 .NET SDK：
 
 ```powershell
-git clone https://github.com/<you>/NaiWa.git
+git clone https://github.com/2188037385-alt/NaiWa.git
 cd NaiWa
 powershell -ExecutionPolicy Bypass -File .\build.ps1          # 生成 dist\NaiWa.exe
 powershell -ExecutionPolicy Bypass -File .\build.ps1 -Screenshots   # 顺便重新生成 docs\images 里的配图
