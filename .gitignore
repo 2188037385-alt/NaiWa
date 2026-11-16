@@ -1,16 +1,16 @@
-# 编译产物
+# Build output
 dist/
 obj/
 *.exe
 *.pdb
 
-# 运行时生成的本地文件（含加密后的 API 密钥，绝不能提交）
+# Local runtime files (settings.json holds your encrypted API keys - never commit it)
 settings.json
 error.log
 startup.jit
 inbox/
 
-# 系统文件
+# OS files
 Thumbs.db
 Desktop.ini
 .DS_Store

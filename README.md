@@ -6,15 +6,15 @@ English · [简体中文](README.zh-CN.md)
 
 # NaiWa
 
-**A cute pixel-art frog that lives on your Windows desktop — and a handy productivity assistant.**
+**A tiny pixel-art frog that lives on your Windows desktop — and helps you understand, rewrite and remember things.**
 
-Screenshot annotation · OCR / translate from screenshots · Select-to-translate and report polishing · AI chat · Natural-language reminders · Claude Code "reply finished" notifications
+*NaiWa means "milk frog" — your little desktop helper.*
 
-A single ~130 KB exe, starts in about 0.1 seconds; built with the .NET Framework that already ships with Windows — no SDK to install.
+Explain anything you select or screenshot · Polish your writing · Annotate screenshots · Plain-English reminders · Claude Code notifications
 
-The app UI is in Chinese. Reminders are also given in Chinese, for example 「20 分钟后提醒我喝水」.
+One ~150 KB executable · starts in about 0.1 s · bring your own API key (OpenAI, Google Gemini, OpenRouter or any OpenAI-compatible endpoint)
 
-[Download](#install) · [Features](#features) · [Build from source](#build-from-source)
+[Install](#install) · [Features](#features) · [Shortcuts](#shortcuts) · [Build from source](#build-from-source)
 
 </div>
 
@@ -22,65 +22,83 @@ The app UI is in Chinese. Reminders are also given in Chinese, for example 「20
 
 ## Features
 
-### Screenshots: window detection, annotation, text extraction, translation
+### Explain — selected text, a screen region, or a screenshot
 
-`Ctrl+Alt+S` takes a screenshot. Hover to highlight a window, **click to capture the whole window**, or drag to select a region.
-
-<img src="docs/images/toolbar.png" alt="Screenshot toolbar" width="620">
-
-- **Annotation**: pen (`P`) and highlighter (`H`), three colors each, `Ctrl+Z` to undo. The highlighter is semi-transparent; going back over the same stroke will not make it darker.
-- **Copy / save / pin to the desktop**: annotations are drawn into the image.
-- **Extract text**: transcribes only the original text in the image, keeping the layout.
-- **Translate**: original + translation (Chinese ↔ English, detected automatically). `Ctrl+Alt+D` goes straight into screenshot-translate mode.
-- **Ask NaiWa**: brings the screenshot (including any circles you drew) into the chat; follow-up questions like "what does this mean" still have the image in context.
-
-### Select-to-translate and report polishing
-
-Select text in any app:
-
-| Hotkey | Action |
+| Shortcut | What it does |
 |---|---|
-| `Ctrl+Alt+T` | Translate the selection (Chinese → English, anything else → Chinese) |
-| `Ctrl+Alt+P` | Polish the selection for lab reports, design write-ups, and other STEM writing: numbers, units, formulas, variable names, and citation numbers are left as-is; nothing is added that was not in the original |
+| `Ctrl+Alt+T` | **Explain Selection** — select text in any app (an article, a contract clause, code, an error message, a term you don't know) and get a short, plain explanation |
+| `Ctrl+Alt+D` | **Explain Screen** — drag over any part of the screen and NaiWa explains it right away: charts, formulas, error dialogs, UI you don't recognize |
 
-The result card can be expanded to show the full original. Below it are 「复制结果」(Copy result) and 「更简洁」(Make it shorter). **Results never automatically overwrite your clipboard.** If the selected text cannot be read, NaiWa tells you so, instead of silently using stale clipboard content.
+Answers start with one sentence, add a few bullet points only when useful, and stay around 150 words. Click **Ask a follow-up** to keep going — screenshot follow-ups still see the image. Text inside a selection or a screenshot is treated as material to analyze, never as instructions.
+
+### Polish Writing
+
+`Ctrl+Alt+P` polishes the selected text — emails, Slack messages, reports, docs. It keeps your language, tone, facts, numbers, names, links and code exactly, and never adds anything. Then **Make shorter**, **To English**, or **Copy**.
 
 <img src="docs/images/chat.png" alt="Chat window" width="400">
 
-### Reminders
+Results **never overwrite your clipboard** until you click Copy. If NaiWa can't read your selection (some apps block it), it tells you instead of silently using whatever was on the clipboard before.
 
-Talk to NaiWa in Chinese, for example 「20 分钟后提醒我喝水」 or 「下午 3 点提醒我交实验报告」. When the time comes, NaiWa shows a notification; you can choose 「完成」(Done) or 「10 分钟后」(Snooze 10 min). Each reminder in the list can be cancelled on its own; saying 「取消喝水提醒」 cancels only that one.
+### Screenshots with annotation
 
-### Claude Code "reply finished" notifications
+`Ctrl+Alt+S` — hover to highlight a window, **click to grab the whole window**, or drag to select a region.
 
-Used with the [Claude Code](https://claude.com/claude-code) Stop hook: whenever Claude finishes a reply, NaiWa shows a notification with the project name and the start of the reply. Click 「打开 Claude」(Open Claude) to return to the Claude window. If you are already looking at Claude, it only gives a light visual cue, with no sound.
+<img src="docs/images/toolbar.png" alt="Screenshot toolbar" width="620">
 
-<img src="docs/images/notify.png" alt="Notification bubble" width="512">
+- **Annotate** with a pen (`P`) or highlighter (`H`), three colours each, `Ctrl+Z` to undo.
+- **Copy**, **save**, or **pin** the shot on your desktop — annotations included.
+- **Extract Text** copies out the exact text (layout preserved, `[unreadable]` where it can't read).
+- **Explain** / **Ask NaiWa** send the shot (with your circles and highlights) to the AI. **More → Translate to English** is there when you need it.
 
-### Stay out of the way
+### Reminders in plain English
 
-- Hides automatically during fullscreen games or videos; reminders and notifications from that period are held and delivered once when you leave fullscreen.
-- The chat window is a normal window; it does not stay always-on-top over other apps.
-- No daily startup greeting, and it does not hop around at random.
-- Dragging NaiWa automatically dismisses the chat window and bubbles; the right-click menu can change the size (小 / 中 / 大 — small / medium / large) or hide it to the tray.
+Just tell NaiWa:
 
-<img src="docs/images/menu.png" alt="Right-click menu" width="270">
+```
+remind me in 20 minutes to stretch
+remind me to call Sam tomorrow at 9am
+remind me at 3:30 PM to join the standup
+remind me on Friday at 2pm to submit the report
+```
+
+When it's time you get **Done** or **Snooze 10 min**. Ambiguous times get a question back ("Did you mean 3 AM or 3 PM?"), times that already passed are never silently moved, and repeating reminders are clearly declined for now instead of being half-created. Say *show my reminders* or *cancel my stretch reminder* to manage them; each one can also be cancelled from the list.
+
+### Claude Code notifications
+
+With a [Claude Code](https://claude.com/claude-code) Stop hook, NaiWa pops up whenever Claude finishes a reply — project name, the first line of the reply, and an **Open Claude** button. If you're already looking at Claude it's just a quiet note.
+
+<img src="docs/images/notify.png" alt="Notifications" width="560">
+
+### Quiet by design
+
+- Hides during fullscreen games and videos; anything that happens meanwhile is collected and shown once when you're back.
+- The chat window is a normal window — it doesn't stay on top of your work.
+- No daily greeting, no random hopping. Drag NaiWa anywhere; the right-click menu has size (small / medium / large) and *Hide to tray*.
+
+<img src="docs/images/menu.png" alt="Context menu" width="250">
 
 ## Install
 
-1. Download `NaiWa.exe` from [Releases](../../releases) and put it in a fixed folder, for example `C:\Tools\NaiWa\`. Settings are saved next to the exe.
-2. Double-click to run. Right-click NaiWa → 设置 (Settings), and fill in your AI keys:
-   - **DeepSeek** (chat, translation, polishing): <https://platform.deepseek.com/api_keys>
-   - **Doubao / Volcengine Ark** (vision: screenshot OCR, screenshot translation, asking about images): <https://console.volcengine.com/ark>
+1. Download `NaiWa.exe` from [Releases](../../releases) and put it in a folder of its own, e.g. `C:\Tools\NaiWa\` (settings are saved next to it).
+2. Run it. Right-click the frog → **Settings**, pick a provider and paste your API key:
 
-   Filling in just one key still works; screenshots, annotation, and reminders need no key at all.
-3. To start with Windows, check 「开机自动启动」(Start with Windows) in Settings.
+   <img src="docs/images/settings.png" alt="Settings" width="420">
 
-System requirements: Windows 10 / 11 (ships with .NET Framework 4.8; nothing else to install).
+   | Provider | Base URL | Default model | Get a key |
+   |---|---|---|---|
+   | OpenAI | `https://api.openai.com/v1` | `gpt-5.4-mini` | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
+   | Google Gemini | `https://generativelanguage.googleapis.com/v1beta/openai` | `gemini-3.5-flash-lite` | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+   | OpenRouter | `https://openrouter.ai/api/v1` | `openai/gpt-5.4-mini` | [openrouter.ai/keys](https://openrouter.ai/keys) |
+   | Custom | any OpenAI-compatible endpoint (e.g. a local server) | your choice | — |
 
-### Claude Code integration (optional)
+   Use **Test connection** for text and **Test image input** for screenshots (it sends a tiny built-in image and checks the answer). Screenshot features that need a vision model stay dimmed until image input is set up; copying, saving, annotating, pinning and reminders work with no key at all.
+3. Tick **Launch at sign-in** if you want NaiWa to start with Windows.
 
-Add a Stop hook in `~/.claude/settings.json` (replace the path with the actual location of your `NaiWa.exe`; the path must not contain spaces):
+Requires Windows 10 or 11 (the .NET Framework 4.8 it needs is built in).
+
+### Connect Claude Code (optional)
+
+Add a Stop hook to `~/.claude/settings.json` (use the real path to your `NaiWa.exe`, without spaces):
 
 ```json
 {
@@ -96,66 +114,67 @@ Add a Stop hook in `~/.claude/settings.json` (replace the path with the actual l
 }
 ```
 
-The hook process only writes the start of that reply into an `inbox` folder next to the exe, then exits immediately; the already-running NaiWa reads it and shows a notification.
+The hook process writes the start of the reply into an `inbox` folder next to the exe and exits immediately; the running NaiWa picks it up.
 
-## Hotkeys
+## Shortcuts
 
-| Hotkey | Action |
+| Shortcut | Action |
 |---|---|
 | `Ctrl+Alt+S` | Screenshot |
-| `Ctrl+Alt+D` | Screenshot translate |
-| `Ctrl+Alt+T` | Translate selected text |
-| `Ctrl+Alt+P` | Polish selected text (reports) |
-| In screenshot: `P` / `H` | Pen / highlighter |
-| In screenshot: `Ctrl+Z` | Undo last stroke |
-| In screenshot: `Enter` | Copy (or translate, in screenshot-translate mode) |
-| In screenshot: `Esc` / right-click | Cancel / exit the pen |
+| `Ctrl+Alt+D` | Explain Screen |
+| `Ctrl+Alt+T` | Explain Selection |
+| `Ctrl+Alt+P` | Polish Writing |
+| `P` / `H` (in a screenshot) | Pen / highlighter |
+| `Ctrl+Z` (in a screenshot) | Undo a stroke |
+| `Enter` (in a screenshot) | Copy (Explain in Explain Screen mode) |
+| `Esc` / right-click (in a screenshot) | Cancel / leave the drawing tool |
 
-If another app is already using a hotkey, NaiWa will tell you, and all of these features are also available from the right-click menu.
+If another app already uses a shortcut, NaiWa tells you; every feature is also in the right-click menu.
 
 ## Privacy
 
-- Keys are encrypted with Windows DPAPI and stored in `settings.json` next to the exe; only the current Windows user can decrypt them.
-- Text or screenshots are sent to the service you chose (DeepSeek or Volcengine Ark) only when you actively use an AI feature. Screenshots, annotation, copy, save, and reminders all stay local.
-- No analytics, telemetry, or auto-update.
+- Your API key is encrypted with Windows DPAPI in `settings.json` next to the exe; only your Windows account can decrypt it.
+- AI requests send the content you submit (and the relevant conversation context) to the endpoint you configured — nothing else, and nothing until you use an AI feature. OpenRouter may forward requests to its upstream providers.
+- Changing the AI connection starts a new conversation, so earlier messages and screenshots are never sent to a different endpoint.
+- Screenshots, annotations, copy/save/pin and reminders stay on your PC. No analytics, telemetry or auto-update.
 
 ## Build from source
 
-No Visual Studio, and no .NET SDK:
+No Visual Studio, no .NET SDK:
 
 ```powershell
-git clone https://github.com/2188037385-alt/NaiWa.git
+git clone https://github.com/<you>/NaiWa.git
 cd NaiWa
-powershell -ExecutionPolicy Bypass -File .\build.ps1          # produces dist\NaiWa.exe
-powershell -ExecutionPolicy Bypass -File .\build.ps1 -Screenshots   # also regenerates the images in docs\images
+powershell -ExecutionPolicy Bypass -File .\build.ps1                # -> dist\NaiWa.exe
+powershell -ExecutionPolicy Bypass -File .\build.ps1 -Screenshots   # also re-render docs\images
 ```
 
-`build.ps1` calls the C# compiler that ships with Windows: `%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\csc.exe` (C# 5). All code lives in a single file, `src/NaiWa.cs`.
+`build.ps1` uses `%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\csc.exe` (C# 5), which every Windows 10/11 machine has. All code is in `src/NaiWa.cs`.
 
-`-Screenshots` runs `NaiWa.exe --snapshot docs\images`: it renders the character, bubbles, chat window, menu, and toolbar to PNGs off-screen — no windows pop up, and it does not steal focus.
+`-Screenshots` runs `NaiWa.exe --snapshot docs\images`, which renders the sprites, bubbles, chat window, settings, menu and toolbar to PNG offscreen — no window appears and focus isn't touched.
 
-### Project structure
+### Project layout
 
 ```
 NaiWa/
 ├─ src/
-│  ├─ NaiWa.cs        All source (WPF, single file)
-│  └─ frames.txt      ASCII-art sprite; compiled into the app icon
-├─ docs/images/       README screenshots (generated by --snapshot)
-├─ build.ps1          Build script
-└─ .github/workflows/ CI build; pushing a v* tag publishes a Release
+│  ├─ NaiWa.cs        all source (WPF, single file)
+│  └─ frames.txt      pixel art as text; the app icon is generated from it
+├─ docs/images/       README images (rendered by --snapshot)
+├─ build.ps1          build script
+└─ .github/workflows/ CI build; pushing a v* tag publishes a release with NaiWa.exe
 ```
 
-### Implementation notes
+### How it works
 
-- **Instant startup**: before WPF loads, a Win32 layered window (`UpdateLayeredWindow`) draws NaiWa first; once WPF is ready it swaps in seamlessly. Together with multi-core JIT caching, cold start is about 0.1 seconds.
-- **Window detection**: before a screenshot, `EnumWindows` + `DWMWA_EXTENDED_FRAME_BOUNDS` records the then-current z-order, skipping cloaked and click-through windows, so the highlight matches the frozen frame exactly.
-- **Annotation export**: strokes are drawn into the screenshot in physical pixels, so they stay aligned even on high-DPI displays.
-- **Streaming**: both DeepSeek and Volcengine Ark use an OpenAI-compatible API, displayed as SSE streams.
+- **Instant startup**: before WPF loads, a Win32 layered window (`UpdateLayeredWindow`) draws the frog; WPF swaps in seamlessly. With a multicore-JIT profile, cold start is about 0.1 s.
+- **Window detection**: just before capture, `EnumWindows` + `DWMWA_EXTENDED_FRAME_BOUNDS` record the z-order (skipping cloaked and click-through windows) so it matches the frozen image exactly.
+- **Annotations** are rendered into the capture at physical-pixel scale, so they line up on high-DPI screens.
+- **AI**: one OpenAI-compatible connection, streamed over SSE; images are sent as `image_url` data URLs.
 
-## About the sprite
+## About the character
 
-NaiWa is an original pixel character: a pear-shaped body, bulging green-and-white eyes, and a little spinning star on its head. The sprite data is the ASCII art in `SpriteData`; feel free to draw new expressions on top of it.
+NaiWa is an original pixel character: a pear-shaped frog with big green eyes and a little spark above its head that spins while it's thinking. The sprite data is plain text in `SpriteData` — new expressions welcome.
 
 ## License
 

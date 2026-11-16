@@ -1,6 +1,6 @@
-﻿# 编译奶蛙：只用 Windows 自带的 .NET Framework 4 编译器（csc.exe），不需要安装任何 SDK
-#   .\build.ps1               → dist\NaiWa.exe
-#   .\build.ps1 -Screenshots  → 编译后离屏渲染界面截图到 docs\images（更新 README 配图用）
+﻿# Build NaiWa with the C# compiler that ships with Windows (.NET Framework 4, csc.exe). No SDK or Visual Studio needed.
+#   .\build.ps1               -> dist\NaiWa.exe
+#   .\build.ps1 -Screenshots  -> also re-render the README images into docs\images (offscreen, no windows appear)
 param([switch]$Screenshots)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -11,10 +11,10 @@ New-Item -ItemType Directory -Force $obj, $dist | Out-Null
 
 $fw  = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319"
 $wpf = "$fw\WPF"
-if (-not (Test-Path "$fw\csc.exe")) { throw "找不到 $fw\csc.exe（需要 Windows 自带的 .NET Framework 4.x）" }
+if (-not (Test-Path "$fw\csc.exe")) { throw "Can't find $fw\csc.exe (needs the .NET Framework 4.x that ships with Windows)" }
 Add-Type -AssemblyName System.Drawing
 
-# 1. 由像素图生成程序图标（PNG 内嵌 ICO）
+# 1. App icon from the pixel art (PNG inside an ICO)
 $frames = Get-Content "$src\frames.txt" -Encoding UTF8
 $rows = @(); $on = $false
 foreach ($l in $frames) { if ($l -like '== *') { if ($rows.Count) { break }; $on = $true; continue }; if ($on) { $rows += $l } }
@@ -28,18 +28,18 @@ $w.Write([uint16]0); $w.Write([uint16]1); $w.Write([uint16]1)
 $w.Write([byte]0); $w.Write([byte]0); $w.Write([byte]0); $w.Write([byte]0); $w.Write([uint16]1); $w.Write([uint16]32); $w.Write([uint32]$png.Length); $w.Write([uint32]22); $w.Write($png); $w.Flush()
 [IO.File]::WriteAllBytes("$obj\naiwa.ico", $ico.ToArray())
 
-# 2. 编译
+# 2. Compile
 $out = Join-Path $dist 'NaiWa.exe'
 $refs = @("$wpf\PresentationFramework.dll", "$wpf\PresentationCore.dll", "$wpf\WindowsBase.dll", "$fw\System.Xaml.dll", "$fw\System.Windows.Forms.dll", "$fw\System.Drawing.dll", "$fw\System.Web.Extensions.dll", "$fw\System.Security.dll", "$fw\Microsoft.CSharp.dll", "$fw\System.Core.dll", "$fw\System.dll") | ForEach-Object { "/r:$_" }
 & "$fw\csc.exe" /nologo /target:winexe /optimize+ /codepage:65001 "/win32icon:$obj\naiwa.ico" "/out:$out" $refs "$src\NaiWa.cs"
-if ($LASTEXITCODE -ne 0) { throw "编译失败" }
+if ($LASTEXITCODE -ne 0) { throw "Build failed" }
 "OK -> $out"
 
-# 3. 可选：离屏渲染 README 配图（不会弹出窗口、不抢焦点）
+# 3. Optional: render the README images offscreen
 if ($Screenshots) {
     $img = Join-Path $root 'docs\images'
     New-Item -ItemType Directory -Force $img | Out-Null
     $p = Start-Process $out -ArgumentList '--snapshot', "`"$img`"" -PassThru
-    if (-not $p.WaitForExit(30000)) { $p.Kill(); throw "截图渲染超时" }
+    if (-not $p.WaitForExit(30000)) { $p.Kill(); throw "Screenshot rendering timed out" }
     Get-ChildItem $img -Filter *.png | ForEach-Object { "  $($_.Name)" }
 }
